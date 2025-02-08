@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordina i tuoi profumi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .product {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 15px auto;
+            max-width: 400px;
+        }
+        .product img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .product select, .product input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        .product button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .cart-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+        .cart-items {
+            list-style: none;
+            padding: 0;
+        }
+        .cart-summary {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ordina i tuoi profumi</h1>
+    <div id="products-container"></div>
+    
+    <div class="cart-container">
+        <h2>🛒 Carrello <span id="cart-count">(0)</span></h2>
+        <ul id="cart-items"></ul>
+        <p class="cart-summary">Totale: <span id="cart-total">0.00€</span></p>
+        <button onclick="checkout()">📩 Invia Ordine</button>
+    </div>
+    
+    <script>
+        const products = [
+            { name: "Vigna Rossa", desc: "Passione e calore.", img: "vigna_rossa.png", formats: ["200ml - 20€", "500ml - 35€"] },
+            { name: "Citri Fructus", desc: "Freschezza agrumata.", img: "citri_fructus.png", formats: ["200ml - 20€", "500ml - 35€"] },
+            { name: "Eucalipto", desc: "Rigenerazione e purezza.", img: "eucalipto.png", formats: ["200ml - 20€", "500ml - 35€"] },
+            { name: "Vaniglia Nera", desc: "Raffinatezza e dolcezza.", img: "vaniglia_nera.png", formats: ["200ml - 20€", "500ml - 35€"] },
+            { name: "Lavanda Menta", desc: "Freschezza rilassante.", img: "lavanda_menta.png", formats: ["200ml - 20€", "500ml - 35€"] },
+            { name: "Risveglio", desc: "Energia e vitalità.", img: "risveglio.png", formats: ["200ml - 20€", "500ml - 35€"] },
+            { name: "Sapientia", desc: "Profondità e mistero.", img: "sapientia.png", formats: ["200ml - 20€", "500ml - 35€"] },
+            { name: "Incanto", desc: "Magia e seduzione.", img: "incanto.png", formats: ["200ml - 20€", "500ml - 35€"] },
+            { name: "Brezza", desc: "Profumo per bucato.", img: "10.png", formats: ["500ml - 18€"] },
+            { name: "Fiori", desc: "Profumo per bucato.", img: "3.png", formats: ["500ml - 18€"] },
+            { name: "Tramonto", desc: "Profumo per bucato.", img: "20.png", formats: ["500ml - 18€"] }
+        ];
+        
+        function generateProductHTML() {
+            let container = document.getElementById("products-container");
+            products.forEach(product => {
+                let formatOptions = product.formats.map(f => `<option value='${f}'>${f}</option>`).join("");
+                container.innerHTML += `
+                    <div class="product">
+                        <img src="${product.img}" alt="${product.name}">
+                        <h2>${product.name}</h2>
+                        <p>${product.desc}</p>
+                        <select>${formatOptions}</select>
+                        <input type="number" min="1" value="1">
+                        <button onclick="addToCart('${product.name}', this)">🛒 Aggiungi al Carrello</button>
+                    </div>
+                `;
+            });
+        }
+        
+        function addToCart(name, element) {
+            let format = element.previousElementSibling.previousElementSibling.value;
+            let quantity = element.previousElementSibling.value;
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            cart.push({ name, format, quantity });
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateCart();
+        }
+        
+        function updateCart() {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            let cartList = document.getElementById("cart-items");
+            let cartCount = document.getElementById("cart-count");
+            let cartTotal = document.getElementById("cart-total");
+            cartList.innerHTML = "";
+            let total = 0;
+            cart.forEach(item => {
+                cartList.innerHTML += `<li>${item.name} - ${item.format} x ${item.quantity}</li>`;
+                total += parseFloat(item.format.split('- ')[1].replace('€', '')) * item.quantity;
+            });
+            cartCount.textContent = `(${cart.length})`;
+            cartTotal.textContent = `${total.toFixed(2)}€`;
+        }
+        
+        function checkout() {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            if (cart.length === 0) {
+                alert("Il carrello è vuoto!");
+                return;
+            }
+            let message = cart.map(item => `- ${item.name} - ${item.format} x ${item.quantity}`).join("%0A");
+            window.open(`https://wa.me/393717771328?text=${encodeURIComponent(message)}`, "_blank");
+        }
+        
+        generateProductHTML();
+        updateCart();
+    </script>
+</body>
+</html>
+
