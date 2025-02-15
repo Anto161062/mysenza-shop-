@@ -167,8 +167,13 @@
         function confirmOrder() {
             let cart = JSON.parse(localStorage.getItem("cart")) || [];
             if (cart.length === 0) return;
+             let name = document.getElementById("customer-name").value.trim();
+    if (!name) {
+        alert("Per favore, inserisci il tuo Nome e Cognome");
+        return;
+    }
 
-            let message = `🟢 *ORDINE MYSENZA1* 🟢\n\n📌 *Ciao! Ecco il mio ordine:*\n\n`;
+    let message = `🟢 *ORDINE MYSENZA1* 🟢\n\n📌 *Ciao! Ecco il mio ordine:*\n\n`;
 
             cart.forEach(item => {
                 message += `🔵 *${item.name}* ${item.size} x ${item.quantity} = *${item.price * item.quantity}€*\n`;
