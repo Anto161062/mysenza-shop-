@@ -95,6 +95,10 @@
         <h2>🛒 Carrello <span id="cart-count">(0)</span></h2>
         <ul id="cart-items"></ul>
         <p class="cart-summary">Totale: <span id="cart-total">0.00€</span></p>
+
+        <label class="label">Inserisci il tuo Nome e Cognome</label>
+        <input type="text" id="customer-name" placeholder="Nome e Cognome">
+
         <button onclick="confirmOrder()">📩 Invia Ordine</button>
         <button class="clear-cart" onclick="clearCart()">🗑️ Svuota Carrello</button>
     </div>
@@ -165,20 +169,24 @@
         }
 
         function confirmOrder() {
+            let customerName = document.getElementById("customer-name").value.trim();
+            if (!customerName) {
+                alert("Per favore, inserisci il tuo Nome e Cognome.");
+                return;
+            }
+
             let cart = JSON.parse(localStorage.getItem("cart")) || [];
             if (cart.length === 0) return;
 
-            let message = `🟢 *ORDINE MYSENZA1* 🟢\n\n📌 *Ciao! Ecco il mio ordine:*\n\n`;
+            let message = `Ciao, sono ${customerName}\n🟢 *ORDINE MYSENZA1* 🟢\n\n📌 Ecco il mio ordine:\n\n`;
 
             cart.forEach(item => {
                 message += `🔵 *${item.name}* ${item.size} x ${item.quantity} = *${item.price * item.quantity}€*\n`;
             });
 
-            message += `🛍️ *TOTALE ORDINE:* *${document.getElementById("cart-total").textContent}*\n\n`;
-            message += `📩 *Attendo conferma, grazie!* ⬆️\n\n`;
+            message += `🛍️ *TOTALE ORDINE:* *${document.getElementById("cart-total").textContent}*\n\n📩 *Attendo conferma, grazie!*`;
 
             window.open(`https://wa.me/393717771328?text=${encodeURIComponent(message)}`, "_blank");
-
             clearCart();
         }
 
@@ -191,5 +199,7 @@
         updateCart();
     </script>
 </body>
+</html>
+
 </html>
 
